@@ -1,0 +1,31 @@
+# AI R&D Team — 项目配置（Alan-Ark）
+#
+# path 为「相对 ai-rd 仓库根目录」的相对路径（不是相对本文件）。
+# 这样同一份配置在两种场景下都能正确解析：
+#   - 主干场景  G:/Workspace/Alan-Ark/ai-rd          → ../alan-ark 指向 trunk
+#   - 项目场景  G:/Workspace/projects/<项目>/ai-rd    → ../alan-ark 指向该项目的 worktree
+# 整个项目文件夹因此可整体搬移/归档，不依赖绝对路径。
+
+name: alan-ark
+
+repositories:
+  backend:
+    path: ../alan-ark
+    stack: "Spring Boot 4.1.0 多模块基座（无业务模块）"
+    git: true
+  admin:
+    path: ../alan-ark-admin
+    stack: "Vue 3 + Vite + pnpm 管理后台模板"
+    git: true
+  app:
+    path: ../alan-ark-app
+    stack: "uni-app x 业务 App（Alan-Ark 用户端，当前走 mock）"
+    git: true
+
+workflow:
+  require_requirement_approval: true
+  require_architecture_approval: true
+  require_code_review: true
+  require_qa_pass: true
+  require_product_acceptance: true
+  require_human_release_confirmation: true
