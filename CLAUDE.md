@@ -10,13 +10,31 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 ## 三个业务仓库
 
-| 角色      | 路径                                     | 技术栈                          | git                                       |
-| ------- | -------------------------------------- | ---------------------------- | ----------------------------------------- |
-| backend | `G:/Workspace/Alan-Ark/alan-ark`       | Spring Boot 多模块 Maven        | ✓                                         |
-| admin   | `G:/Workspace/Alan-Ark/alan-ark-admin` | Vue 3 + Vite + pnpm + UnoCSS | ✓                                         |
-| app     | `G:/Workspace/Alan-Ark/alan-ark-app`   | uni-app + uniCloud           | ✗（未 git init） |
+| 角色 | 仓库目录 | 技术栈 | git |
+|---|---|---|---|
+| backend | `alan-ark` | Spring Boot 4.1.0 多模块基座（无业务模块） | ✓ |
+| admin | `alan-ark-admin` | Vue 3 + Vite + pnpm 管理后台模板 | ✓ |
+| app | `alan-ark-app` | uni-app x 业务 App（当前走 mock） | ✓ |
 
-路径以 `projects/alan-ark/project.yaml` 为准，**禁止猜测**。
+路径为**相对 `ai-rd` 根目录**（`../alan-ark` 等），以 `projects/alan-ark/project.yaml` 为准，**禁止猜测**。
+
+## 多分支交付模型
+
+一个交付项目 = 四个仓库（ai-rd + 三端）的**同名分支 + 同名 worktree**：
+
+```
+G:/Workspace/Alan-Ark/          # 主干（各仓库 main，只读基线）
+└── projects/<项目名>/          # 交付项目（各仓库 <项目名> 分支）
+    ├── ai-rd/                  # 该项目专属的团队 + 产物
+    ├── alan-ark/               # backend @ <项目名>
+    ├── alan-ark-admin/         # admin @ <项目名>
+    └── alan-ark-app/           # app @ <项目名>
+```
+
+- 接到新项目：`./scripts/create-delivery.sh <项目名> [backend admin app] [--dry-run] [--pull]`
+- 进入项目团队：`cd G:/Workspace/projects/<项目名>/ai-rd && claude`
+- `ai-rd` 的 `main` 只放团队（agent / skill / 模板 / 脚本），**业务产物只存在于各交付分支**。
+- 团队更新只改 `main`；交付分支按需 `git merge main` 同步团队（快照模型）。
 
 ## 团队（8 个角色，定义在 `.claude/agents/`）
 
@@ -58,19 +76,19 @@ NEW → REQUIREMENT_REVIEW → REQUIREMENT_APPROVED
 
 ## 铁律
 
-- **先决策、后编码**：未过需求 + 技术评审，禁止修改三个业务仓库
-- 绝不修改三个仓库的生产代码（除非进入开发且门禁通过）
-- 禁止直接改 main/master；用 `feature/<requirement>/<component>` 分支或 worktree
+- **先决策、后编码**：未过需求 + 技术评审，禁止修改业务代码
+- 绝不修改主干（main）的生产代码——每个交付项目在独立分支 + worktree 里开发
 - 危险操作（force push / reset --hard / 删分支 / 删数据）必须先询问
 - 不把推测当事实：扫描结论标注 `CONFIRMED / INFERRED / UNKNOWN`
 
 ## 如何发起一个需求
 
-1. 以 team-lead 身份启动：`/team-lead`（或主会话按 team-lead 职责工作）
-2. team-lead 创建 `REQ-xxx` → 组织需求评审 → `APPROVED`
-3. tech-lead 产出 `ARC-xxx` → 技术评审（含独立 reviewer）→ `APPROVED`
-4. 拆 `TASK-xxx` → 派发 backend / admin / app
-5. 开发 → reviewer → qa → product 验收 → 人工发布确认
+1. `./scripts/create-delivery.sh <项目名>` 建分支 + worktree
+2. `cd G:/Workspace/projects/<项目名>/ai-rd && claude`，以 `/team-lead` 启动
+3. team-lead 创建 `REQ-xxx` → 需求评审 → `APPROVED`
+4. tech-lead 产出 `ARC-xxx` → 技术评审（含独立 reviewer）→ `APPROVED`
+5. 拆 `TASK-xxx` → 派发 backend / admin / app（在各自 worktree 下开发）
+6. 开发 → reviewer → qa → product 验收 → 人工发布确认 → 合并回 main
 
 ## 产物目录
 
