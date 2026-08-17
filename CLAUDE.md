@@ -89,7 +89,7 @@ NEW → REQUIREMENT_REVIEW → REQUIREMENT_APPROVED
 ## 如何发起一个需求
 
 1. `./scripts/create-delivery.sh <项目名>` 建分支 + worktree
-2. `cd G:/Workspace/projects/<项目名>/ai-rd && claude --add-dir ../alan-ark ../alan-ark-admin ../alan-ark-app`，以 `/team-lead` 启动（`--add-dir` 让 teammates 能访问兄弟仓库）
+2. `cd G:/Workspace/projects/<项目名>/ai-rd && claude --agent team-lead --add-dir ../alan-ark ../alan-ark-admin ../alan-ark-app`（以 team-lead 作为主会话启动；`--add-dir` 让 teammates 能访问兄弟仓库）
 3. team-lead 创建 `REQ-xxx` → 需求评审 → `APPROVED`
 4. tech-lead 产出 `ARC-xxx` → 技术评审（含独立 reviewer）→ `APPROVED`
 5. 拆 `TASK-xxx` → 派发 backend / admin / app（在各自 worktree 下开发）
