@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working in this
 
 ## 这是什么
 
-这是 Alan-Ark 项目的 AI 研发团队工作区。它把真实研发流程（需求评审 → 技术方案 → 技术评审 → 开发 → Code Review → QA → 产品验收 → 发布）映射到 Claude Code 的 subagent + skill 能力上。
+这是 Alan-Ark 项目的 AI 研发团队工作区。它把真实研发流程（需求评审 → 技术方案 → 技术评审 → 开发 → Code Review → QA → 产品验收 → 发布）映射到 Claude Code 的 **Agent Teams** 能力上（team-lead 唯一协调 + 各角色作为 teammates）。
 
 工作区**只保存研发过程产物**（需求 / 架构 / 契约 / 决策 / 任务 / 评审 / 测试 / 验收），**绝不复制业务代码**。代码只存在于三个业务仓库。
 
@@ -39,6 +39,11 @@ G:/Workspace/Alan-Ark/          # 主干（各仓库 main，只读基线）
 ## 团队（8 个角色，定义在 `.claude/agents/`）
 
 team-lead · product · tech-lead · backend · admin · app · reviewer · qa
+
+运行模式为 **Agent Teams**：team-lead 是唯一协调 Agent，其余角色是 teammates。
+- team-lead 用 `subagent_type` 指定每个 teammate 的 Agent Definition（如 `subagent_type="backend"`）
+- `subagent_type` 只指定角色定义，不会让 teammate 降级成普通 subagent——teammate 有独立 session / context，且相互间可用 SendMessage 协作
+- 禁止 backend / admin / app / reviewer / qa 自行建立第二个 Team
 
 分离铁律：
 
@@ -84,7 +89,7 @@ NEW → REQUIREMENT_REVIEW → REQUIREMENT_APPROVED
 ## 如何发起一个需求
 
 1. `./scripts/create-delivery.sh <项目名>` 建分支 + worktree
-2. `cd G:/Workspace/projects/<项目名>/ai-rd && claude`，以 `/team-lead` 启动
+2. `cd G:/Workspace/projects/<项目名>/ai-rd && claude --add-dir ../alan-ark ../alan-ark-admin ../alan-ark-app`，以 `/team-lead` 启动（`--add-dir` 让 teammates 能访问兄弟仓库）
 3. team-lead 创建 `REQ-xxx` → 需求评审 → `APPROVED`
 4. tech-lead 产出 `ARC-xxx` → 技术评审（含独立 reviewer）→ `APPROVED`
 5. 拆 `TASK-xxx` → 派发 backend / admin / app（在各自 worktree 下开发）
